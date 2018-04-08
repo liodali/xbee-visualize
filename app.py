@@ -59,6 +59,7 @@ class App(tk.Tk):
         frame.tkraise()
 class Main(tk.Frame):
         def __init__(self, parent, controller):
+            self.comport="com"
             tk.Frame.__init__(self, parent)
             self.controller = controller
             tk.Label(self, text="COM PORT").grid(row=0)
@@ -75,17 +76,21 @@ class Main(tk.Frame):
             port = str(self.com_port.get())
             err = False
             if len(port) > 0:
+                if(self.comport not in port):
+                    err=True
+                    self.error_label.config(text="Com Port not valid!")
+                else :
+                    try:
+                        s = ser.Serial(port, baudrate=9600, timeout=1)
 
-                try:
-                    s = ser.Serial(port, baudrate=9600, timeout=1)
-                    
-                except:
-                    err = True
-                    self.error_label.config(text="Port is already open!!")
+                    except:
+                        err = True
+                        self.error_label.config(text="Port is already open!!")
 
-                s.close()
+                    s.close()
             else:
                 err=True
+
                 self.error_label.config(text="Empty Port!!")
             if (not err):
                 self.controller.show_frame("Visualize")
